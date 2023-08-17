@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ""
+    relative_path: /home/starry/Workspaces/ur5e_ws/src/ur5e_robotiq_description/urdf/ur5e_robotiq.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ur5e_robot.srdf
+  CONFIG:
+    author_name: starry
+    author_email: soeun99@gmail.com
+    generated_timestamp: 1692272405
