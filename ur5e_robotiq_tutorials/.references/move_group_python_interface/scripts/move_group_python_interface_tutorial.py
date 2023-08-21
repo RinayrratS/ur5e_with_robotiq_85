@@ -1,14 +1,52 @@
 #!/usr/bin/env python
 
+# Software License Agreement (BSD License)
+#
+# Copyright (c) 2013, SRI International
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer in the documentation and/or other materials provided
+#    with the distribution.
+#  * Neither the name of SRI International nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Author: Acorn Pooley, Mike Lautman
+
+## BEGIN_SUB_TUTORIAL imports
+##
+## To use the Python MoveIt interfaces, we will import the `moveit_commander`_ namespace.
+## This namespace provides us with a `MoveGroupCommander`_ class, a `PlanningSceneInterface`_ class,
+## and a `RobotCommander`_ class. More on these below. We also import `rospy`_ and some messages that we will use:
+##
+
 # Python 2/3 compatibility imports
 from __future__ import print_function
 from six.moves import input
-from std_srvs.srv import Empty
-from picknplace.srv import EndPosition
 
 import sys
 import copy
-import math
 import rospy
 import moveit_commander
 import moveit_msgs.msg
@@ -88,18 +126,8 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## If you are using a different robot, change this value to the name of your robot
         ## arm planning group.
         ## This interface can be used to plan and execute motions:
-        group_name = "arm"
+        group_name = "panda_arm"
         move_group = moveit_commander.MoveGroupCommander(group_name)
-        # Put the arm in the start position
-        move_group.set_max_velocity_scaling_factor(0.5)  # Adjust the value as needed
-        move_group.set_named_target("home")
-        move_group.go()
-
-        gripper_group = moveit_commander.MoveGroupCommander("gripper")
-        # Put the gripper in the start position
-        gripper_group.set_max_velocity_scaling_factor(0.5)  # Adjust the value as needed
-        gripper_group.set_named_target("open")
-        gripper_group.go()
 
         ## Create a `DisplayTrajectory`_ ROS publisher which is used to display
         ## trajectories in Rviz:
@@ -159,12 +187,13 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## We use the constant `tau = 2*pi <https://en.wikipedia.org/wiki/Turn_(angle)#Tau_proposals>`_ for convenience:
         # We get the joint values from the group and change some of the values:
         joint_goal = move_group.get_current_joint_values()
-        joint_goal[0] = math.radians(90)
-        joint_goal[1] = math.radians(-120)
-        joint_goal[2] = math.radians(55)
-        joint_goal[3] = math.radians(-90)
-        joint_goal[4] = math.radians(0)
-        joint_goal[5] = math.radians(0)
+        joint_goal[0] = 0
+        joint_goal[1] = -tau / 8
+        joint_goal[2] = 0
+        joint_goal[3] = -tau / 4
+        joint_goal[4] = 0
+        joint_goal[5] = tau / 6  # 1/6 of a turn
+        joint_goal[6] = 0
 
         # The go command can be called with joint values, poses, or without any
         # parameters if you have already set the pose or joint target for the group
@@ -193,9 +222,9 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## end-effector:
         pose_goal = geometry_msgs.msg.Pose()
         pose_goal.orientation.w = 1.0
-        pose_goal.position.x = 0.5
-        pose_goal.position.y = 0.5
-        pose_goal.position.z = 0.5
+        pose_goal.position.x = 0.4
+        pose_goal.position.y = 0.1
+        pose_goal.position.z = 0.4
 
         move_group.set_pose_target(pose_goal)
 
@@ -360,11 +389,11 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         ## First, we will create a box in the planning scene between the fingers:
         box_pose = geometry_msgs.msg.PoseStamped()
-        box_pose.header.frame_id = "robotiq_85_base_link"
+        box_pose.header.frame_id = "panda_hand"
         box_pose.pose.orientation.w = 1.0
         box_pose.pose.position.z = 0.11  # above the panda_hand frame
         box_name = "box"
-        scene.add_box(box_name, box_pose, size=(0.025, 0.025, 0.025))
+        scene.add_box(box_name, box_pose, size=(0.075, 0.075, 0.075))
 
         ## END_SUB_TUTORIAL
         # Copy local variables back to class variables. In practice, you should use the class
@@ -392,7 +421,7 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## planning scene to ignore collisions between those links and the box. For the Panda
         ## robot, we set ``grasping_group = 'hand'``. If you are using a different robot,
         ## you should change this value to the name of your end effector group name.
-        grasping_group = "gripper"
+        grasping_group = "panda_hand"
         touch_links = robot.get_link_names(group=grasping_group)
         scene.attach_box(eef_link, box_name, touch_links=touch_links)
         ## END_SUB_TUTORIAL
@@ -446,10 +475,6 @@ class MoveGroupPythonInterfaceTutorial(object):
         )
 
 
-
-
-
-
 def main():
     try:
         print("")
@@ -485,7 +510,7 @@ def main():
         input("============ Press `Enter` to add a box to the planning scene ...")
         tutorial.add_box()
 
-        input("============ Press `Enter` to attach a Box to the robot ...")
+        input("============ Press `Enter` to attach a Box to the Panda robot ...")
         tutorial.attach_box()
 
         input(
@@ -494,7 +519,7 @@ def main():
         cartesian_plan, fraction = tutorial.plan_cartesian_path(scale=-1)
         tutorial.execute_plan(cartesian_plan)
 
-        input("============ Press `Enter` to detach the box from the robot ...")
+        input("============ Press `Enter` to detach the box from the Panda robot ...")
         tutorial.detach_box()
 
         input(

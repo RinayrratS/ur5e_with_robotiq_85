@@ -5,13 +5,13 @@ import rospy
 import math
 import moveit_commander
 from std_srvs.srv import Empty
-from ur5e_robotiq_moveit.srv import EndPosition
+from vnbots_gazebo.srv import EndPosition
 
 class robotControl:
 
     def __init__(self):
         self.server = rospy.Service('MoveRobot', EndPosition, self.moveRobot) 
-        self.move_group = moveit_commander.MoveGroupCommander('arm')
+        self.move_group = moveit_commander.MoveGroupCommander('manipulator')
         self.waitPosition()
 
     def waitPosition(self):

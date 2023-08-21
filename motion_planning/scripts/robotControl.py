@@ -5,12 +5,12 @@ import rospy
 import math
 import moveit_commander
 from std_srvs.srv import Empty
-from vnbots_gazebo.srv import EndPosition
+from motion_planning.srv import EndPosition
 
 class robotControl:
 
     def __init__(self):
-        self.server = rospy.Service('MoveRobot', EndPosition, self.moveRobot) 
+        self.server = rospy.Service('MoveRobot', EndPosition, self.moveRobot)
         self.move_group = moveit_commander.MoveGroupCommander('manipulator')
         self.waitPosition()
 
@@ -19,25 +19,25 @@ class robotControl:
         print("Move to wait position")
         joint_goal = self.move_group.get_current_joint_values()
 
-        joint_goal[0] = math.radians(90) 
+        joint_goal[0] = math.radians(90)
         joint_goal[1] = math.radians(-90)
         joint_goal[2] = math.radians(90)
-        joint_goal[3] = math.radians(-132) 
-        joint_goal[4] = math.radians(-90) 
-        joint_goal[5] = math.radians(0) 
+        joint_goal[3] = math.radians(-132)
+        joint_goal[4] = math.radians(-90)
+        joint_goal[5] = math.radians(0)
         self.move_group.go(joint_goal, wait=True)
         self.move_group.stop()
 
-    
+
     def readyPosition(self):
         print("Move to ready position")
         joint_goal = self.move_group.get_current_joint_values()
-        joint_goal[0] = math.radians(0);       
-        joint_goal[1] = math.radians(-61.58);  
-        joint_goal[2] = math.radians(104.42);  
-        joint_goal[3] = math.radians(-132.84); 
-        joint_goal[4] = math.radians(-90);     
-        joint_goal[5] = math.radians(0);      
+        joint_goal[0] = math.radians(0)
+        joint_goal[1] = math.radians(-61.58)
+        joint_goal[2] = math.radians(104.42)
+        joint_goal[3] = math.radians(-132.84)
+        joint_goal[4] = math.radians(-90)
+        joint_goal[5] = math.radians(0)
         self.move_group.go(joint_goal, wait=True)
         self.move_group.stop()
 
@@ -63,7 +63,7 @@ class robotControl:
         # Make the EE point down
         print('Move gripper vertical')
         joint_goal = self.move_group.get_current_joint_values()
-        joint_goal[4] = math.radians(-90) 
+        joint_goal[4] = math.radians(-90)
         self.move_group.go(joint_goal, wait=True)
         self.move_group.stop()
 
@@ -90,7 +90,7 @@ class robotControl:
         if container == 'Container 1':
 
             joint_goal = self.move_group.get_current_joint_values()
-            joint_goal[0] = math.radians(-110) 
+            joint_goal[0] = math.radians(-110)
             self.move_group.go(joint_goal, wait=True)
             self.move_group.stop()
 
@@ -99,7 +99,7 @@ class robotControl:
 
         else:
             joint_goal = self.move_group.get_current_joint_values()
-            joint_goal[0] = math.radians(90) 
+            joint_goal[0] = math.radians(90)
             self.move_group.go(joint_goal, wait=True)
             self.move_group.stop()
 

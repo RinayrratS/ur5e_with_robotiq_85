@@ -14,10 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
       message_generation
 )
 
-add_service_files(
-  FILES
-  EndPosition.srv
-)
 
 generate_messages(
   DEPENDENCIES

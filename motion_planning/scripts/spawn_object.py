@@ -10,7 +10,7 @@ from gazebo_msgs.srv import SpawnModel
 from geometry_msgs.msg import *
 
 def spawn_object(pose,name,path):
-    
+
     model_xml = ''
 
     with open (path, 'r') as xml_file:
@@ -31,13 +31,13 @@ def main():
     xPose = [1.2,1.3,1.4,1.8,1.5]
     yPose = [0.1,-0.2,0.5,0.4,0]
     # Object file path
-    
-    path = os.getcwd() 
-    
-    pathList = [path + '/src/ROS-robot-arm-with-flask/vnbots_gazebo/scripts/gear_part/model.sdf',path + '/src/ROS-robot-arm-with-flask/vnbots_gazebo/scripts/box/box.sdf',path + '/src/ROS-robot-arm-with-flask/vnbots_gazebo/scripts/ball/ball.sdf',path + '/src/ROS-robot-arm-with-flask/vnbots_gazebo/scripts/bowl/model.sdf',path + '/src/ROS-robot-arm-with-flask/vnbots_gazebo/scripts/gear_part/model.sdf']
 
-    
-    i =0 
+    path = os.getcwd()
+
+    pathList = [path + '/src/motion_planning/scripts/gear_part/model.sdf',path + '/src/motion_planning/scripts/box/box.sdf',path + '/src/motion_planning/scripts/ball/ball.sdf',path + '/src/motion_planning/scripts/bowl/model.sdf',path + '/src/motion_planning/scripts/gear_part/model.sdf']
+
+
+    i =0
 
     # Each object needs an unique name
     for x in xPose:
