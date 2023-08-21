@@ -612,12 +612,12 @@
     <transmission name="robotiq_85_left_knuckle_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="robotiq_85_left_knuckle_joint">
-            <hardwareInterface>PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <!-- <hardwareInterface>EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="robotiq_85_left_knuckle_motor">
             <mechanicalReduction>1</mechanicalReduction>
-            <hardwareInterface>PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
             <!-- <hardwareInterface>EfforJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
