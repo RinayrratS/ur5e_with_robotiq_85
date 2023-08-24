@@ -1,0 +1,12 @@
+<launch>
+    <node pkg="robotiq_gripper_controller" type="robotiq_gripper_controller_node" name="robotiq_gripper_controller" respawn="true" output="screen">
+      <param name="port_name" value="/dev/ttyUSB0" />
+      <param name="baudrate" value="115200" />
+    </node>
+    <!-- <param name="robot_description" command="$(find xacro)/xacro $(find robotiq_gripper_description)/urdf/robotiq_gripper.urdf.xacro"/> -->
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" /> -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+        <rosparam param="source_list">["joint_states", "gripper/joint_states"]</rosparam>
+    </node>
+    <!-- <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find robotiq_gripper_description)/rviz/view_gripper.rviz" required="true"/> -->
+</launch>

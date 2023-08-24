@@ -14,10 +14,13 @@ find_package(catkin REQUIRED COMPONENTS
       message_generation
 )
 
-add_service_files(
-  FILES
-  EndPosition.srv
-)
+#add_service_files(
+#  FILES
+#  EndPosition.srv
+#)
+
+# add_executable(move_group_python_interface_tutorial src/ur5e_robotiq_tutorials/scripts/move_group_python_interface_tutorial.py)
+
 
 generate_messages(
   DEPENDENCIES
@@ -34,7 +37,7 @@ catkin_package(
       moveit_core
       moveit_ros_planning_interface
   DEPENDS message_runtime
-      
+
 )
 
 ###########
@@ -45,11 +48,7 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${EIGEN3_INCLUDE
 
 
 
+# catkin_install_python(PROGRAMS scripts/move_group_python_interface_tutorial.py
+#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
-catkin_install_python(PROGRAMS scripts/robotControl.py 
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-catkin_install_python(PROGRAMS scripts/robotControl.py scripts/spawn_object.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)

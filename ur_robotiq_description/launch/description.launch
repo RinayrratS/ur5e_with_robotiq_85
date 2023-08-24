@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+  <param name="robot_description" command="$(find xacro)xacro '$(find ur_robotiq_description)/urdf/ur5e/ur5e.xacro'"/>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+
+</launch>
