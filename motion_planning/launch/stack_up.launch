@@ -1,0 +1,6 @@
+<launch>
+
+  <node name="stack_up" pkg="motion_planning" type="stack_up.py" respawn="false" output="screen">
+  </node>
+
+</launch>

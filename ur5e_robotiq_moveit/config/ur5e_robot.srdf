@@ -30,19 +30,19 @@
         <joint name="robotiq_85_left_knuckle_joint" value="0"/>
     </group_state>
     <group_state name="home" group="manipulator">
-        <joint name="elbow_joint" value="1.7288"/>
-        <joint name="shoulder_lift_joint" value="-1.673"/>
-        <joint name="shoulder_pan_joint" value="0"/>
-        <joint name="wrist_1_joint" value="-0.0372"/>
-        <joint name="wrist_2_joint" value="-1.1525"/>
-        <joint name="wrist_3_joint" value="0"/>
+        <joint name="elbow_joint" value="-1.5794"/>
+        <joint name="shoulder_lift_joint" value="-1.5794"/>
+        <joint name="shoulder_pan_joint" value="3.1415"/>
+        <joint name="wrist_1_joint" value="-3.1415"/>
+        <joint name="wrist_2_joint" value="-1.5794"/>
+        <joint name="wrist_3_joint" value="-1.5794"/>
     </group_state>
     <group_state name="up" group="manipulator">
-        <joint name="elbow_joint" value="0.2417"/>
-        <joint name="shoulder_lift_joint" value="-1.673"/>
+        <joint name="elbow_joint" value="1.5794"/>
+        <joint name="shoulder_lift_joint" value="-1.5794"/>
         <joint name="shoulder_pan_joint" value="0"/>
-        <joint name="wrist_1_joint" value="-1.8961"/>
-        <joint name="wrist_2_joint" value="1.2269"/>
+        <joint name="wrist_1_joint" value="-1.5794"/>
+        <joint name="wrist_2_joint" value="1.5794"/>
         <joint name="wrist_3_joint" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->

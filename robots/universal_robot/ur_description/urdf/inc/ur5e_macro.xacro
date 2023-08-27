@@ -43,5 +43,28 @@
       safety_pos_margin="${safety_pos_margin}"
       safety_k_position="${safety_k_position}"
     />
+
+    <link name="ur5e_table_link">
+      <visual>
+        <origin xyz="0 0 0.71" rpy="0 0 -1.57" />
+        <geometry>
+          <mesh filename="package://ur5e_robotiq_description/meshes/UR5e_table.stl"/>
+        </geometry>
+        <material name="light_grey">
+          <color rgba="0.75 0.75 0.75 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ur5e_robotiq_description/meshes/UR5e_table.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="ur5e_table_joint" type="fixed">
+      <parent link="ur5e_table_link"/>
+      <child link="${prefix}base_link"/>
+      <origin xyz="0 0 0.71" rpy="0 0 0"/>
+     </joint>
   </xacro:macro>
 </robot>
