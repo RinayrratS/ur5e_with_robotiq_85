@@ -169,8 +169,34 @@ class MoveGroupPythonInterfaceTutorial(object):
         print(current_joint)
         print(all_close(joint_goal, current_joint, 0.01))
 
+    def go_to_joint_goal(self, joint0: object, joint1: object, joint2: object, joint3: object, joint4: object, joint5: object) -> object:
+        # Copy class variables to local variables to make the web tutorials more clear.
+        # In practice, you should use the class variables directly unless you have a good
+        # reason not to.
 
-    def go_to_pose_goal(self):
+        # Put the arm in the start position
+        self.move_group.set_max_velocity_scaling_factor(0.5)
+        joint_goal = self.move_group.get_current_joint_values()
+        joint_goal[0] = math.radians(joint0)
+        joint_goal[1] = math.radians(joint1)
+        joint_goal[2] = math.radians(joint2)
+        joint_goal[3] = math.radians(joint3)
+        joint_goal[4] = math.radians(joint4)
+        joint_goal[5] = math.radians(joint5)
+
+        success = self.move_group.go(joint_goal,wait=True)
+        # Calling `stop()` ensures that there is no residual movement
+        self.move_group.stop()
+        # It is always good to clear your targets after planning with poses.
+        # Note: there is no equivalent function for clear_joint_value_targets().
+        self.move_group.clear_pose_targets()
+        current_joint = self.move_group.get_current_joint_values()
+        time.sleep(2)
+        print(current_joint)
+        print(all_close(joint_goal, current_joint, 0.01))
+
+
+    def go_to_pose_goal(self, pose_x: object, pose_y: object, pose_z: object) -> object:
         # Copy class variables to local variables to make the web tutorials more clear.
         # In practice, you should use the class variables directly unless you have a good
         # reason not to.
@@ -181,15 +207,17 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## ^^^^^^^^^^^^^^^^^^^^^^^
         ## We can plan a motion for this group to a desired pose for the
         ## end-effector:
-        pose_goal = self.move_group.get_current_pose().pose
+        current_pose = self.move_group.get_current_pose().pose
+
+        pose_goal = current_pose
         print("============ Printing robot position")
         print(pose_goal.position.x, pose_goal.position.y, pose_goal.position.z)
         print("")
         #pose_goal.orientation.w = 1.0
 
-        pose_goal.position.x = 0.5
-        pose_goal.position.y = -0.1
-        pose_goal.position.z = 0.78
+        pose_goal.position.x = pose_x
+        pose_goal.position.y = pose_y
+        pose_goal.position.z = pose_z
 
         print("============ Printing robot position")
         print(pose_goal.position.x, pose_goal.position.y, pose_goal.position.z)
@@ -242,8 +270,8 @@ class MoveGroupPythonInterfaceTutorial(object):
 
         pose_goal = self.move_group.get_current_pose().pose
 
-        pose_goal.position.x = 0.5
-        pose_goal.position.y = 0.3
+        pose_goal.position.x = 0.75
+        pose_goal.position.y = -0.1
         pose_goal.position.z = height
 
 
@@ -291,54 +319,120 @@ class MoveGroupPythonInterfaceTutorial(object):
             self.rate.sleep()
             seconds2 = rospy.get_time()
 
+    def gripper_move(self, length):
+        goal = self.pub
+
+        start1 = rospy.get_time()
+        seconds2 = rospy.get_time()
+        while (seconds2 - start1) < 0.3 and not rospy.is_shutdown():
+            goal.publish(length, 1.0, 0.0)
+            self.rate.sleep()
+            seconds2 = rospy.get_time()
+
 
     def pick_and_place(self, length1: object, length2: object, length3: object, height: object) -> object:
 
         self.linear_motion_absolute(length1, length2, height + 0.15)
-        time.sleep(1)
         self.linear_motion_absolute(length1, length2, length3)
         self.gripper_close()
-        time.sleep(1)
         self.linear_motion_absolute(length1, length2, height + 0.15)
         initial_pose = self.move_group.get_current_pose().pose
 
         self.go_to_goal_state(height + 0.15)
         self.go_to_goal_state(height+0.0015)
         self.gripper_open()
-        time.sleep(1)
         self.go_to_goal_state(height + 0.15)
 
-        #final_pose = self.move_group.get_current_pose().pose
-        #if initial_pose.position.x == length1 and initial_pose.position.y == length2:
 
 
+    def stack(self, columns: object, rows: object) -> object:
 
-    def stack(self, rows: object, columns: object) -> object:
-
-        row_num = 0
         column_num = 0
+        row_num = 0
         count = 0
-        box_height = 0.04
-        height = 0.78
+        #box_height = 0.04
+        height = 0.9
 
         # initial axis
-        row_length = 0.5
+        column_length = 0.5
 
-        while row_num < rows:
-            column_num = 0
-            column_length = -0.1
-            row_length += row_num * 0.1
+        while column_num < columns:
+            row_num = 0
+            row_length = -0.1
 
-            while column_num < columns:
-                column_length += column_num * 0.1
-
-                self.pick_and_place(row_length, column_length, 0.78, height)
-                column_num += 1
+            while row_num < rows:
+                self.pick_and_place(column_length, row_length, 0.78, height)
+                row_num += 1
                 count += 1
                 print(count, "block pick and place complete!")
-                height = 0.78 + (count * box_height)
-                input("============ Press `Enter` to move on")
-            row_num += 1
+                #height = 0.78 + (count * box_height)
+                #input("============ Press `Enter` to move on")
+                row_length += 0.1
+            column_num += 1
+            column_length += 0.1
+
+
+    def flip_bowl(self, joint5: object) -> object:
+        # Copy class variables to local variables to make the web tutorials more clear.
+        # In practice, you should use the class variables directly unless you have a good
+        # reason not to.
+
+        # Put the arm in the start position
+        self.move_group.set_max_velocity_scaling_factor(0.5)
+        joint_goal = self.move_group.get_current_joint_values()
+
+        joint_goal[5] = math.radians(joint5)
+
+        success = self.move_group.go(joint_goal,wait=True)
+        # Calling `stop()` ensures that there is no residual movement
+        self.move_group.stop()
+        # It is always good to clear your targets after planning with poses.
+        # Note: there is no equivalent function for clear_joint_value_targets().
+        self.move_group.clear_pose_targets()
+        current_joint = self.move_group.get_current_joint_values()
+        time.sleep(2)
+        print(current_joint)
+        print(all_close(joint_goal, current_joint, 0.01))
+
+
+    def move_and_flip_bowl(self):
+
+        self.move_group.set_max_velocity_scaling_factor(0.5)
+
+        # Rotate the arm to grip initial bowl
+        self.go_to_joint_goal(0,-90, 90, 0, 90, 90)
+
+        # Move the arm to grip initial bowl
+        bowl_radius = 0.05
+        handle_length = 0.025
+        initial_bowl_height = 0.78 + 0.05
+        self.gripper_move(0.5)
+        self.go_to_pose_goal(0.7-bowl_radius-handle_length, -0.1, initial_bowl_height+0.15)
+        time.sleep(1)
+        self.go_to_pose_goal(0.7-bowl_radius-handle_length, -0.1, initial_bowl_height)
+        time.sleep(1)
+
+        self.go_to_pose_goal(0.7-bowl_radius, -0.1, initial_bowl_height)
+        self.gripper_close()
+        time.sleep(1)
+        self.go_to_pose_goal(0.7-bowl_radius, -0.1, initial_bowl_height+bowl_radius+0.15)
+
+
+        # Move the arm to latter bowl
+        self.go_to_pose_goal(0.7-bowl_radius, 0.3, 0.78+bowl_radius+0.02)
+        self.flip_bowl(-90)
+        time.sleep(2)
+        self.flip_bowl(90)
+
+        # Move the arm back to initial bowl
+        self.go_to_pose_goal(0.7-bowl_radius, -0.1, initial_bowl_height+0.15)
+        self.go_to_pose_goal(0.7-bowl_radius, -0.1, initial_bowl_height)
+        self.gripper_move(0.5)
+        self.go_to_pose_goal(0.7-bowl_radius-handle_length, -0.1, initial_bowl_height)
+        self.go_to_pose_goal(0.7-bowl_radius-handle_length, -0.1, initial_bowl_height+0.15)
+
+        # Move to home state
+        self.go_to_home_state()
 
 
 
@@ -359,7 +453,10 @@ def main():
         tutorial.gripper_open()
 
         input("============ Press `Enter` to stack...")
-        tutorial.stack(3,2)
+        tutorial.stack(2,3)
+
+        input("============ Press `Enter` to move and flip the bowl...")
+        tutorial.move_and_flip_bowl()
 
 
 
