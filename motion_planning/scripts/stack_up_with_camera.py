@@ -3,7 +3,7 @@
 # Python 2/3 compatibility imports
 from __future__ import print_function
 from six.moves import input
-  
+
 import sys
 import copy
 import rospy
